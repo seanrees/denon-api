@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controls</title>
+    <script>
+    function xhr(method, url, handler) {
+        var xhr = new XMLHttpRequest();
+        xhr.addEventListener("readystatechange", function(e) {
+            if (e.target.readyState == xhr.DONE) {
+                obj = JSON.parse(e.target.responseText);
+                handler(obj)
+            }
+        })
+
+        xhr.open(method, url, true)
+        xhr.send()
+    }
+
+    function input(method, url) {
+        xhr(method, url, function (obj) {
+            document.getElementById("current_input").innerHTML = obj.input;
+        });
+    }
+
+    function mode(method, url) {
+        xhr(method, url, function (obj) {
+            document.getElementById("current_mode").innerHTML = obj.mode;
+        });
+    }
+
+    function power(method, url) {
+        xhr(method, url, function (obj) {
+            document.getElementById("current_power").innerHTML = obj.power;
+        });
+    }
+
+    function volume(method, url) {
+        xhr(method, url, function (obj) {
+            document.getElementById("current_volume").innerHTML = "-" + obj.volume + " dB";
+        });
+    }
+
+    function getVolume() {
+        volume("GET", "/volume")
+    }
+
+    function volumeButton(verb) {
+        volume("POST", "/volume/" + verb)
+    }
+
+    function getMode() {
+        mode("GET", "/mode")
+    }
+
+    function modeButton(verb) {
+        mode("PUT", "/mode/" + verb)
+    }
+
+    function getPower() {
+        power("GET", "/power")
+    }
+
+    function powerButton(verb) {
+        power("PUT", "/power/" + verb)
+    }
+   
+    function getInput() {
+        input("GET", "/input")
+    }
+
+    function init() {
+        getInput()
+        getMode()
+        getPower()
+        getVolume();
+    }
+    </script>
+  </head>
+  <body onload="init()">
+    <table>
+        <tr>
+            <th>Current power:</th>
+            <td id="current_power"></td>
+        </tr>
+        <tr>
+            <th>Current volume:</th>
+            <td id="current_volume"></td>
+        </tr>
+        <tr>
+            <th>Current mode:</th>
+            <td id="current_mode"></td>
+        </tr>
+        <tr>
+            <th>Current input:</th>
+            <td id="current_input"></td>
+        </tr>
+    </table>
+    
+    <p>
+        <form>
+            <input type="button" value="Power On" onclick="powerButton('on')"></input>
+            <input type="button" value="Standby" onclick="powerButton('standby')"></input>
+        </form>
+    </p>
+    <p>
+        <form>
+            <input type="button" value="Volume Up" onclick="volumeButton('up')"></input>
+            <input type="button" value="Volume Down" onclick="volumeButton('down')"></input>
+        </form>
+    </p>
+    <p>
+        <form>
+            <input type="button" id="mode_DIRECT" value="DIRECT" onclick="modeButton('DIRECT')"></input>
+            <input type="button" id="mode_MCH STEREO" value="MCH STEREO" onclick="modeButton('MCH STEREO')"></input>
+        </form>
+    </p>
+  </body>
+</html>
