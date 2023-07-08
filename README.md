@@ -1,3 +1,5 @@
+![build and tests](https://github.com/seanrees/denon-api/actions/workflows/build.yml/badge.svg)
+
 # denon-api
 
 This is a simple REST API server for a Denon AVR1912 (also AVR2112CI) receiver.
