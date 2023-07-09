@@ -8,6 +8,8 @@ import (
 	"net"
 	"strings"
 	"time"
+
+	"github.com/seanrees/denon-api/internal/util"
 )
 
 type FakeAvr1912 struct {
@@ -49,7 +51,7 @@ func (f *FakeAvr1912) Serve() {
 				break
 			}
 
-			conn.Write(toBytes(welcome))
+			conn.Write(util.ToBytes(welcome))
 
 			go f.handle(conn)
 		}
@@ -79,7 +81,7 @@ func (f *FakeAvr1912) handle(conn net.Conn) {
 			}
 
 			if len(f.Heartbeat) > 0 {
-				conn.Write(toBytes(f.Heartbeat))
+				conn.Write(util.ToBytes(f.Heartbeat))
 			}
 		}
 
@@ -89,7 +91,7 @@ func (f *FakeAvr1912) handle(conn net.Conn) {
 
 		if resp, ok := f.CommandResponse[command]; ok {
 			for _, r := range resp {
-				buf := toBytes(r)
+				buf := util.ToBytes(r)
 				out, err := conn.Write(buf)
 				if err != nil || out < len(buf) {
 					log.Printf("error: could not write %d bytes to %s: %v", len(buf), conn.RemoteAddr(), err)
@@ -98,11 +100,4 @@ func (f *FakeAvr1912) handle(conn net.Conn) {
 			}
 		}
 	}
-}
-
-func toBytes(s string) []byte {
-	buf := make([]byte, len(s)+1)
-	copy(buf, s)
-	buf[len(s)] = '\r'
-	return buf
 }

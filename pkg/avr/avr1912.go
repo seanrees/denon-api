@@ -10,6 +10,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/seanrees/denon-api/internal/util"
 )
 
 var (
@@ -27,11 +29,6 @@ type DenonAvr1912 struct {
 }
 
 type avr1912Connection struct {
-	InputSource  string
-	MasterVolume string
-	Power        string
-	SurroundMode string
-
 	// Address (host:port) to connect to a Denon AVR1912.
 	addr string
 
@@ -97,10 +94,7 @@ func (avr *avr1912Connection) innerConnect() bool {
 		select {
 		case c := <-avr.commands:
 			log.Printf("writing %s", c.command)
-			buf := make([]byte, len(c.command)+1)
-			copy(buf, c.command)
-			buf[len(c.command)] = '\r'
-
+			buf := util.ToBytes(c.command)
 			out, err := conn.Write(buf)
 			if err != nil || out < len(buf) {
 				log.Printf("error: could not write %d bytes to %s: %v", len(buf), avr.addr, err)
